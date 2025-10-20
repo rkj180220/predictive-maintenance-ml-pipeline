@@ -893,23 +893,6 @@ SOFTWARE.
 
 ---
 
-## 📞 Contact
-
-**Author:** rkj180220
-
-- **GitHub:** [@rkj180220](https://github.com/rkj180220)
-- **Email:** [Your email address]
-- **LinkedIn:** [Your LinkedIn profile]
-
-**Project Repository:** https://github.com/rkj180220/predictive-maintenance-ml-pipeline
-
-For questions, suggestions, or collaboration opportunities, feel free to:
-- Open an issue on GitHub
-- Submit a pull request
-- Contact via email
-
----
-
 ## 🙏 Acknowledgments
 
 - NASA Ames Research Center for the C-MAPSS dataset
@@ -918,4 +901,4 @@ For questions, suggestions, or collaboration opportunities, feel free to:
 
 ---
 
-**Last Updated:** October 18, 2025
+**Last Updated:** October 20, 2025
