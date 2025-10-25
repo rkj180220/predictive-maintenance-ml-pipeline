@@ -354,8 +354,8 @@ class PipelineMonitor:
             'performance_summary': self.get_performance_summary()
         }
 
-        with open(filepath, 'w') as f:
-            json.dump(export_data, f, indent=2, default=str)
+        with open(filepath, 'w', encoding='utf-8') as f:
+            json.dump(export_data, f, indent=2, default=str, ensure_ascii=False)
 
         logger.info(f"Metrics exported to {filepath}")
 

@@ -294,14 +294,14 @@ END OF CORRELATION ANALYSIS REPORT
 
     def save_report(self, filepath: Path):
         """Save correlation report to file"""
-        with open(filepath, 'w') as f:
+        with open(filepath, 'w', encoding='utf-8') as f:
             f.write(self.generate_correlation_report())
         logger.info(f"Correlation report saved to {filepath}")
 
     def export_json(self, filepath: Path):
         """Export correlation results as JSON"""
-        with open(filepath, 'w') as f:
-            json.dump(self.correlation_results, f, indent=2)
+        with open(filepath, 'w', encoding='utf-8') as f:
+            json.dump(self.correlation_results, f, indent=2, ensure_ascii=False)
         logger.info(f"Correlation results exported to {filepath}")
 
 

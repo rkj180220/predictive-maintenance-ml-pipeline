@@ -308,7 +308,7 @@ END OF VALIDATION REPORT
 
     def save_validation_report(self, filepath: Path):
         """Save validation report to file"""
-        with open(filepath, 'w') as f:
+        with open(filepath, 'w', encoding='utf-8') as f:
             f.write(self.generate_validation_report())
         logger.info(f"Validation report saved to {filepath}")
 

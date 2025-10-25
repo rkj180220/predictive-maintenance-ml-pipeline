@@ -48,7 +48,7 @@ class PipelineDashboard:
 
         # Save to file
         output_path = self.output_dir / output_filename
-        with open(output_path, 'w') as f:
+        with open(output_path, 'w', encoding='utf-8') as f:
             f.write(html_content)
 
         logger.info(f"Dashboard saved to {output_path}")

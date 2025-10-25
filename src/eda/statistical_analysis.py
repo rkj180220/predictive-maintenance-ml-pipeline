@@ -280,14 +280,14 @@ END OF STATISTICAL ANALYSIS REPORT
 
     def save_report(self, filepath: Path):
         """Save report to file"""
-        with open(filepath, 'w') as f:
+        with open(filepath, 'w', encoding='utf-8') as f:
             f.write(self.generate_summary_report())
         logger.info(f"Statistical report saved to {filepath}")
 
     def export_json(self, filepath: Path):
         """Export results as JSON"""
-        with open(filepath, 'w') as f:
-            json.dump(self.analysis_results, f, indent=2)
+        with open(filepath, 'w', encoding='utf-8') as f:
+            json.dump(self.analysis_results, f, indent=2, ensure_ascii=False)
         logger.info(f"Statistical results exported to {filepath}")
 
 

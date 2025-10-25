@@ -243,8 +243,8 @@ def setup_kaggle_credentials(username: str, api_key: str):
         "key": api_key
     }
 
-    with open(kaggle_json, 'w') as f:
-        json.dump(credentials, f)
+    with open(kaggle_json, 'w', encoding='utf-8') as f:
+        json.dump(credentials, f, ensure_ascii=False)
 
     # Set proper permissions
     os.chmod(kaggle_json, 0o600)

@@ -48,8 +48,8 @@ class EDAReportGenerator:
 
         # Save JSON report
         json_path = output_dir / f"eda_report_{dataset_name.lower()}.json"
-        with open(json_path, 'w') as f:
-            json.dump(report, f, indent=2, default=str)
+        with open(json_path, 'w', encoding='utf-8') as f:
+            json.dump(report, f, indent=2, default=str, ensure_ascii=False)
 
         # Save text report
         text_path = output_dir / f"eda_report_{dataset_name.lower()}.txt"
@@ -166,7 +166,7 @@ class EDAReportGenerator:
 
     def _save_text_report(self, report: dict, output_path: Path):
         """Save report as formatted text"""
-        with open(output_path, 'w') as f:
+        with open(output_path, 'w', encoding='utf-8') as f:
             f.write("="*80 + "\n")
             f.write("EXPLORATORY DATA ANALYSIS REPORT\n")
             f.write("NASA C-MAPSS Turbofan Engine Dataset\n")

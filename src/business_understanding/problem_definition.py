@@ -356,7 +356,7 @@ END OF BUSINESS PROBLEM DEFINITION
 
     def save_report(self, filepath: str):
         """Save business problem definition report to file"""
-        with open(filepath, 'w') as f:
+        with open(filepath, 'w', encoding='utf-8') as f:
             f.write(self.generate_report())
 
     def export_json(self, filepath: str):
@@ -368,8 +368,8 @@ END OF BUSINESS PROBLEM DEFINITION
             "cost_benefit": self.cost_benefit,
             "generated_date": datetime.now().isoformat()
         }
-        with open(filepath, 'w') as f:
-            json.dump(data, f, indent=2)
+        with open(filepath, 'w', encoding='utf-8') as f:
+            json.dump(data, f, indent=2, ensure_ascii=False)
 
 
 if __name__ == "__main__":

@@ -380,14 +380,14 @@ END OF FEATURE IMPORTANCE REPORT
 
     def save_report(self, filepath: Path):
         """Save importance report to file"""
-        with open(filepath, 'w') as f:
+        with open(filepath, 'w', encoding='utf-8') as f:
             f.write(self.generate_importance_report())
         logger.info(f"Feature importance report saved to {filepath}")
 
     def export_json(self, filepath: Path):
         """Export importance results as JSON"""
-        with open(filepath, 'w') as f:
-            json.dump(self.importance_results, f, indent=2)
+        with open(filepath, 'w', encoding='utf-8') as f:
+            json.dump(self.importance_results, f, indent=2, ensure_ascii=False)
         logger.info(f"Feature importance results exported to {filepath}")
 
 
