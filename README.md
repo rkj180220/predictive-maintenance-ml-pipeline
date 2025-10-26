@@ -2,11 +2,12 @@
 
 ## 🎯 Project Overview
 
-A production-ready data pipeline for predictive maintenance of turbofan engines using the NASA C-MAPSS (Commercial Modular Aero-Propulsion System Simulation) dataset. This comprehensive system integrates data ingestion, preprocessing, feature engineering, exploratory data analysis, and automated monitoring with AWS integration capabilities.
+A production-ready **Data Science & Machine Learning Pipeline** for predictive maintenance of turbofan engines using the NASA C-MAPSS (Commercial Modular Aero-Propulsion System Simulation) dataset. This comprehensive system integrates data ingestion, preprocessing, feature engineering, exploratory data analysis, automated monitoring, and complete ML model training/evaluation with MLOps capabilities.
 
 **Author:** rkj180220  
-**Date:** October 18, 2025  
-**Dataset:** NASA C-MAPSS FD002 + FD004 (114,000+ records)
+**Date:** October 26, 2025  
+**Dataset:** NASA C-MAPSS FD002 + FD004 (114,000+ records)  
+**Project Status:** Sub-Objective 1 ✅ Complete | Sub-Objective 2 ✅ Complete
 
 ---
 
@@ -61,6 +62,38 @@ A production-ready data pipeline for predictive maintenance of turbofan engines 
    - Performance metrics tracking
    - Alert system
 
+### ✅ Machine Learning Pipeline (Sub-Objective 2)
+
+8. **Model Preparation (Activity 2.1)**
+   - Algorithm selection with business justification
+   - Two models: Random Forest & XGBoost
+   - Hyperparameter configuration
+   - Model initialization and validation
+
+9. **Model Training (Activity 2.2)**
+   - 70/30 train-test split with stratification
+   - Automated model training pipeline
+   - Feature importance extraction
+   - Model persistence and versioning
+   - Training metrics logging
+
+10. **Model Evaluation (Activity 2.3)**
+    - 4+ core metrics: Accuracy, Precision, Recall, F1-Score
+    - Additional metrics: ROC-AUC, Matthews Correlation, Cohen's Kappa
+    - Confusion matrix analysis
+    - Business cost analysis (FP/FN costs)
+    - Comparative model analysis
+    - Visualization generation
+
+11. **MLOps Monitoring (Activity 2.4)**
+    - Real-time metric logging (4+ metrics tracked)
+    - Model health assessment
+    - Data drift detection
+    - AWS CloudWatch integration
+    - Automated alerting system
+    - Dashboard data generation
+    - Production monitoring capabilities
+
 ---
 
 ## 📋 Requirements
@@ -96,35 +129,69 @@ python3 -m venv .venv
 source .venv/bin/activate  # On macOS/Linux
 # .venv\Scripts\activate  # On Windows
 ```
+### Sub-Objective 1: Data Pipeline
 
-### 3. Install Dependencies
+#### One-Time Execution
+Run the complete data pipeline once:
 ```bash
 pip install -r requirements.txt
 ```
 
-### 4. Configure Kaggle API (Required for Dataset Download)
+#### Scheduled Execution (Every 2 Minutes)
 
 Create Kaggle API credentials:
 1. Go to https://www.kaggle.com/account
 2. Click "Create New API Token"
 3. Save `kaggle.json` to `~/.kaggle/kaggle.json`
-4. Set permissions:
+### Sub-Objective 2: Machine Learning Pipeline
+
+#### Run Complete ML Pipeline (Recommended)
+Execute all ML pipeline stages (2.1 → 2.2 → 2.3 → 2.4):
 ```bash
-chmod 600 ~/.kaggle/kaggle.json
+python run_ml_pipeline.py
 ```
 
-### 5. (Optional) Configure AWS Credentials
+This will:
+1. ✅ Prepare and justify model selection
+2. ✅ Train Random Forest and XGBoost models (70/30 split)
+3. ✅ Evaluate models with comprehensive metrics
+4. ✅ Log MLOps metrics and monitor performance
 
-For AWS CloudWatch integration, create `.env` file:
+#### Run ML Pipeline via Orchestrator
+For programmatic access:
 ```bash
+python -m src.ml_pipeline.pipeline_orchestrator
+```
+
+4. Set permissions:
+```bash
+**Data Pipeline Components:**
+```
+# Business Understanding
+
+
+# Data Ingestion
 AWS_REGION=us-east-1
-AWS_ACCESS_KEY_ID=your_access_key
 AWS_SECRET_ACCESS_KEY=your_secret_key
-AWS_S3_BUCKET=predictive-maintenance-data
-AWS_CLOUDWATCH_LOG_GROUP=/aws/predictive-maintenance/pipeline
+# EDA (requires processed data)
 ```
 
 ---
+**ML Pipeline Components:**
+```bash
+# Model Preparation (Activity 2.1)
+python -m src.ml_pipeline.model_preparation
+
+# Model Training (Activity 2.2) - requires orchestrator
+python -m src.ml_pipeline.model_training
+
+# Model Evaluation (Activity 2.3) - requires trained models
+python -m src.ml_pipeline.model_evaluation
+
+# MLOps Monitoring (Activity 2.4)
+python -m src.ml_pipeline.mlops_monitoring
+```
+
 
 ## 🎮 Usage
 
@@ -163,7 +230,8 @@ python -m src.eda.statistical_analysis
 
 ```
 predictive-maintenance-ml-pipeline/
-├── main.py                          # Main entry point
+├── main.py                          # Data pipeline entry point (Sub-Obj 1)
+├── run_ml_pipeline.py              # ML pipeline entry point (Sub-Obj 2)
 ├── requirements.txt                 # Python dependencies
 ├── README.md                       # This file
 ├── .env                            # Environment variables (create this)
@@ -198,20 +266,58 @@ predictive-maintenance-ml-pipeline/
 │   │   ├── pipeline_scheduler.py  # Scheduling
 │   │   └── dashboard.py           # Dashboard generation
 │   │
-│   └── pipeline_main.py           # Pipeline orchestrator
+│   ├── ml_pipeline/               # 🆕 ML Pipeline (Sub-Objective 2)
+│   │   ├── __init__.py
+│   │   ├── model_preparation.py   # Activity 2.1: Model selection
+│   │   ├── model_training.py      # Activity 2.2: Training (70/30)
+│   │   ├── model_evaluation.py    # Activity 2.3: Evaluation metrics
+│   │   ├── mlops_monitoring.py    # Activity 2.4: MLOps logging
+│   │   └── pipeline_orchestrator.py # ML pipeline orchestrator
+│   │
+│   └── pipeline_main.py           # Data pipeline orchestrator
 │
 ├── data/                          # Data directory
 │   ├── raw/                       # Raw downloaded data
 │   ├── processed/                 # Processed data
 │   └── features/                  # Engineered features
 │
-├── logs/                          # Log files
+├── models/                        # 🆕 Trained ML models
+│   ├── random_forest.pkl          # Random Forest model
+After running the pipelines, you'll find:
+│
+### Data Files (Sub-Objective 1)
+│   ├── ml_pipeline_*.log          # ML pipeline logs
+│   ├── mlops_metrics_*.json       # MLOps metrics
+│   ├── evaluation_results.json    # Model evaluation results
+│   ├── training_history.json      # Training metadata
+│   └── data_drift_*.json          # Data drift analysis
+│
+### ML Models (Sub-Objective 2) 🆕
+- `models/random_forest.pkl`: Trained Random Forest model
+- `models/xgboost.pkl`: Trained XGBoost model
+- `logs/training_history.json`: Training metadata and metrics
+
 ├── visualizations/                # Generated plots
+**Data Pipeline Logs:**
+│   ├── confusion_matrices.png     # 🆕 Model confusion matrices
+│   └── metrics_comparison.png     # 🆕 Model performance comparison
+│
 ├── dashboards/                    # HTML dashboards
 ├── docs/                          # Documentation
 └── notebooks/                     # Jupyter notebooks (optional)
 ```
+**ML Pipeline Logs:** 🆕
+- `logs/ml_pipeline_YYYYMMDD_HHMMSS.log`: ML pipeline execution logs
+- `logs/evaluation_results.json`: Model evaluation metrics
+- `logs/evaluation_report.txt`: Human-readable evaluation report
+- `logs/mlops_metrics_random_forest_*.json`: Random Forest MLOps metrics
+- `logs/mlops_metrics_xgboost_*.json`: XGBoost MLOps metrics
+- `logs/mlops_all_metrics_*.json`: Consolidated MLOps metrics
+- `logs/data_drift_*.json`: Data drift analysis results
+- `logs/mlops_dashboard_data.json`: Dashboard data for visualization
 
+
+**Data Pipeline Visualizations:**
 ---
 
 ## 📊 Output Files
@@ -219,6 +325,10 @@ predictive-maintenance-ml-pipeline/
 After running the pipeline, you'll find:
 
 ### Data Files
+**ML Pipeline Visualizations:** 🆕
+- `visualizations/confusion_matrices.png`: Confusion matrices for both models
+- `visualizations/metrics_comparison.png`: Side-by-side model performance
+
 - `data/raw/`: Original NASA C-MAPSS files
 - `data/processed/train_processed.csv`: Processed training data
 - `data/processed/test_processed.csv`: Processed test data
