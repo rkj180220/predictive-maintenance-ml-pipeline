@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Predictive Maintenance Dashboard</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="/static/css/dashboard.css">
+</head>
+<body>
+    <!-- Navigation Sidebar -->
+    <nav class="sidebar">
+        <div class="sidebar-header">
+            <h2>
+                <i class="fas fa-chart-line"></i>
+                <span>PM Dashboard</span>
+            </h2>
+        </div>
+        <ul class="nav-menu">
+            <li><a href="#overview" class="nav-link active" onclick="return loadPage('overview')"><i class="fas fa-home"></i> Overview</a></li>
+            <li><a href="#data" class="nav-link" onclick="return loadPage('data')"><i class="fas fa-database"></i> Data Pipeline</a></li>
+            <li><a href="#ml" class="nav-link" onclick="return loadPage('ml')"><i class="fas fa-brain"></i> ML Pipeline</a></li>
+            <li><a href="#monitor" class="nav-link" onclick="return loadPage('monitor')"><i class="fas fa-heartbeat"></i> Monitoring</a></li>
+            <li><a href="#control" class="nav-link" onclick="return loadPage('control')"><i class="fas fa-sliders-h"></i> Control Panel</a></li>
+            <li><a href="#logs" class="nav-link" onclick="return loadPage('logs')"><i class="fas fa-file-alt"></i> Logs</a></li>
+        </ul>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-left">
+                <button id="menuToggle" class="menu-toggle">
+                    <i class="fas fa-bars"></i>
+                </button>
+                <h1 id="pageTitle">Dashboard Overview</h1>
+            </div>
+            <div class="header-right">
+                <div class="status-indicator">
+                    <span id="systemStatus" class="status-dot"></span>
+                    <span id="statusText">Connecting...</span>
+                </div>
+                <button id="refreshBtn" class="btn-icon" onclick="refreshData()" title="Refresh">
+                    <i class="fas fa-sync-alt"></i>
+                </button>
+                <button class="btn-icon" onclick="toggleDarkMode()" title="Dark Mode">
+                    <i class="fas fa-moon"></i>
+                </button>
+            </div>
+        </header>
+
+        <!-- Content Area -->
+        <div class="content">
+            <div id="overview-page" class="page active">
+                <div class="grid grid-3">
+                    <!-- Key Metrics Cards -->
+                    <div class="card">
+                        <div class="card-header">
+                            <h3>System Health</h3>
+                            <i class="fas fa-server"></i>
+                        </div>
+                        <div class="card-body">
+                            <div class="metric">
+                                <span class="metric-label">Status</span>
+                                <span id="healthStatus" class="metric-value">HEALTHY</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header">
+                            <h3>Data Pipeline</h3>
+                            <i class="fas fa-database"></i>
+                        </div>
+                        <div class="card-body">
+                            <div class="metric">
+                                <span class="metric-label">Records Processed</span>
+                                <span id="recordsProcessed" class="metric-value">0</span>
+                            </div>
+                            <div class="metric">
+                                <span class="metric-label">Features</span>
+                                <span id="featuresCount" class="metric-value">0</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header">
+                            <h3>ML Pipeline</h3>
+                            <i class="fas fa-brain"></i>
+                        </div>
+                        <div class="card-body">
+                            <div class="metric">
+                                <span class="metric-label">Best Model</span>
+                                <span id="bestModel" class="metric-value">-</span>
+                            </div>
+                            <div class="metric">
+                                <span class="metric-label">Accuracy</span>
+                                <span id="bestAccuracy" class="metric-value">0%</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Model Performance -->
+                <div class="card full-width">
+                    <div class="card-header">
+                        <h3>Model Performance Comparison</h3>
+                        <i class="fas fa-chart-bar"></i>
+                    </div>
+                    <div class="card-body">
+                        <div id="modelComparison" class="model-comparison">
+                            <!-- Populated by JavaScript -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- System Resources -->
+                <div class="grid grid-2">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3>System Resources</h3>
+                            <i class="fas fa-tachometer-alt"></i>
+                        </div>
+                        <div class="card-body">
+                            <div class="resource-stat">
+                                <span>CPU</span>
+                                <div class="progress-bar">
+                                    <div id="cpuProgress" class="progress-fill"></div>
+                                </div>
+                                <span id="cpuValue">0%</span>
+                            </div>
+                            <div class="resource-stat">
+                                <span>Memory</span>
+                                <div class="progress-bar">
+                                    <div id="memoryProgress" class="progress-fill"></div>
+                                </div>
+                                <span id="memoryValue">0%</span>
+                            </div>
+                            <div class="resource-stat">
+                                <span>Disk</span>
+                                <div class="progress-bar">
+                                    <div id="diskProgress" class="progress-fill"></div>
+                                </div>
+                                <span id="diskValue">0%</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header">
+                            <h3>Quick Actions</h3>
+                            <i class="fas fa-bolt"></i>
+                        </div>
+                        <div class="card-body">
+                            <button class="btn btn-primary full" onclick="triggerDataPipeline()">
+                                <i class="fas fa-play"></i> Run Data Pipeline
+                            </button>
+                            <button class="btn btn-success full" onclick="triggerMLPipeline()" style="margin-top: 10px;">
+                                <i class="fas fa-play"></i> Run ML Pipeline
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Data Pipeline Page -->
+            <div id="data-page" class="page">
+                <div class="grid grid-2">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3>Correlation Analysis</h3>
+                            <i class="fas fa-chart-scatter"></i>
+                        </div>
+                        <div class="card-body">
+                            <button class="btn btn-primary" onclick="loadCorrelationData()">Load Data</button>
+                            <div id="correlationData" style="margin-top: 15px; max-height: 400px; overflow-y: auto;"></div>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header">
+                            <h3>Statistical Analysis</h3>
+                            <i class="fas fa-calculator"></i>
+                        </div>
+                        <div class="card-body">
+                            <button class="btn btn-primary" onclick="loadStatisticalData()">Load Data</button>
+                            <div id="statisticalData" style="margin-top: 15px; max-height: 400px; overflow-y: auto;"></div>
+                        </div>
+                    </div>
+
+                    <div class="card full-width">
+                        <div class="card-header">
+                            <h3>Data Drift Detection</h3>
+                            <i class="fas fa-water"></i>
+                        </div>
+                        <div class="card-body">
+                            <button class="btn btn-primary" onclick="loadDriftData()">Load Latest</button>
+                            <button class="btn btn-secondary" onclick="loadDriftHistory()">Load History</button>
+                            <div id="driftData" style="margin-top: 15px; max-height: 500px; overflow-y: auto;"></div>
+                        </div>
+                    </div>
+
+                    <div class="card full-width">
+                        <div class="card-header">
+                            <h3>Data Quality Report</h3>
+                            <i class="fas fa-check-circle"></i>
+                        </div>
+                        <div class="card-body">
+                            <button class="btn btn-primary" onclick="loadValidationReport()">Load Report</button>
+                            <div id="validationReport" style="margin-top: 15px; max-height: 400px; overflow-y: auto; font-family: monospace;"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ML Pipeline Page -->
+            <div id="ml-page" class="page">
+                <div class="grid grid-2">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3>Model Evaluation Results</h3>
+                            <i class="fas fa-star"></i>
+                        </div>
+                        <div class="card-body">
+                            <button class="btn btn-primary" onclick="loadEvaluationResults()">Load Results</button>
+                            <div id="evaluationResults" style="margin-top: 15px; max-height: 400px; overflow-y: auto;"></div>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header">
+                            <h3>Feature Importance</h3>
+                            <i class="fas fa-list-ol"></i>
+                        </div>
+                        <div class="card-body">
+                            <button class="btn btn-primary" onclick="loadFeatureImportance()">Load Features</button>
+                            <div id="featureImportance" style="margin-top: 15px; max-height: 400px; overflow-y: auto;"></div>
+                        </div>
+                    </div>
+
+                    <div class="card full-width">
+                        <div class="card-header">
+                            <h3>Model Health Status</h3>
+                            <i class="fas fa-heartbeat"></i>
+                        </div>
+                        <div class="card-body">
+                            <button class="btn btn-primary" onclick="loadModelHealth()">Load Status</button>
+                            <div id="modelHealth" style="margin-top: 15px; max-height: 400px; overflow-y: auto;"></div>
+                        </div>
+                    </div>
+
+                    <div class="card full-width">
+                        <div class="card-header">
+                            <h3>MLOps Metrics</h3>
+                            <i class="fas fa-chart-line"></i>
+                        </div>
+                        <div class="card-body">
+                            <button class="btn btn-primary" onclick="loadMLOpsMetrics()">Load All Metrics</button>
+                            <button class="btn btn-secondary" onclick="loadXGBoostMetrics()" style="margin-left: 5px;">XGBoost Only</button>
+                            <div id="mlopsMetrics" style="margin-top: 15px; max-height: 400px; overflow-y: auto;"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Monitoring Page -->
+            <div id="monitor-page" class="page">
+                <div class="card full-width">
+                    <div class="card-header">
+                        <h3>Real-time Monitoring Dashboard</h3>
+                        <i class="fas fa-heartbeat"></i>
+                    </div>
+                    <div class="card-body">
+                        <div class="monitoring-controls">
+                            <label>Auto-refresh:
+                                <input type="checkbox" id="autoRefresh" checked onchange="toggleAutoRefresh()">
+                            </label>
+                            <label>Interval (seconds):
+                                <input type="number" id="refreshInterval" min="5" max="300" value="30" style="width: 60px;">
+                            </label>
+                            <button class="btn btn-primary" onclick="startMonitoring()">Start</button>
+                            <button class="btn btn-danger" onclick="stopMonitoring()">Stop</button>
+                        </div>
+
+                        <div class="grid grid-3" style="margin-top: 20px;">
+                            <div class="stat-box">
+                                <h4>CPU Usage</h4>
+                                <p id="monCPU">0%</p>
+                            </div>
+                            <div class="stat-box">
+                                <h4>Memory Usage</h4>
+                                <p id="monMemory">0%</p>
+                            </div>
+                            <div class="stat-box">
+                                <h4>Disk Usage</h4>
+                                <p id="monDisk">0%</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Control Panel Page -->
+            <div id="control-page" class="page">
+                <div class="grid grid-2">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3>Pipeline Triggers</h3>
+                            <i class="fas fa-power-off"></i>
+                        </div>
+                        <div class="card-body">
+                            <h4 style="margin-bottom: 10px;">Data Pipeline</h4>
+                            <button class="btn btn-success full" onclick="triggerDataPipelineExtended()">
+                                <i class="fas fa-play"></i> Trigger Execution
+                            </button>
+                            <div id="dataPipelineStatus" style="margin-top: 10px; padding: 10px; background: #f0f0f0; border-radius: 5px;"></div>
+
+                            <h4 style="margin-top: 20px; margin-bottom: 10px;">ML Pipeline</h4>
+                            <button class="btn btn-success full" onclick="triggerMLPipelineExtended()">
+                                <i class="fas fa-play"></i> Trigger Execution
+                            </button>
+                            <div id="mlPipelineStatus" style="margin-top: 10px; padding: 10px; background: #f0f0f0; border-radius: 5px;"></div>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header">
+                            <h3>Pipeline Logs</h3>
+                            <i class="fas fa-file-alt"></i>
+                        </div>
+                        <div class="card-body">
+                            <button class="btn btn-primary" onclick="loadPipelineLogs(5)">Last 5 Logs</button>
+                            <button class="btn btn-primary" onclick="loadPipelineLogs(10)" style="margin-left: 5px;">Last 10 Logs</button>
+                            <div id="pipelineLogs" style="margin-top: 15px; max-height: 400px; overflow-y: auto; font-family: monospace; background: #f5f5f5; padding: 10px; border-radius: 5px;"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Logs Page -->
+            <div id="logs-page" class="page">
+                <div class="card full-width">
+                    <div class="card-header">
+                        <h3>System Logs - Live Monitoring</h3>
+                        <i class="fas fa-history"></i>
+                    </div>
+                    <div class="card-body">
+                        <div class="log-controls" style="display: flex; gap: 10px; margin-bottom: 15px; flex-wrap: wrap; align-items: center;">
+                            <button class="btn btn-success" onclick="loadFullLogs()" title="Load the latest complete log file">
+                                <i class="fas fa-download"></i> Load Latest Log
+                            </button>
+                            <button class="btn btn-primary" onclick="refreshLogs()" title="Refresh and reload the current log">
+                                <i class="fas fa-sync-alt"></i> Refresh
+                            </button>
+                            <input type="text" id="logFilter" placeholder="Search logs (e.g., ERROR, WARNING, SUCCESS)..." style="padding: 8px; flex: 1; min-width: 250px; border: 1px solid #ddd; border-radius: 4px; font-size: 14px;">
+                            <button class="btn btn-primary" onclick="filterLogs()" style="margin: 0;" title="Filter logs by search text">
+                                <i class="fas fa-search"></i> Search
+                            </button>
+                            <button class="btn btn-secondary" onclick="clearLogs()" title="Clear all logs from display">
+                                <i class="fas fa-trash"></i> Clear
+                            </button>
+                        </div>
+                        <div style="background: #f0f0f0; padding: 10px; border-radius: 5px; margin-bottom: 15px; font-size: 13px; color: #666;">
+                            <strong>💡 How to use:</strong> Click "Load Latest Log" to fetch the most recent ML pipeline log. Use the search box to find ERROR, WARNING, or other keywords. Click "Refresh" to reload the same log file.
+                        </div>
+                        <div id="logOutput" style="margin-top: 15px; max-height: 700px; overflow-y: auto; background: #1e1e1e; color: #00ff00; padding: 15px; border-radius: 5px; font-family: 'Courier New', monospace; font-size: 12px; line-height: 1.4; white-space: pre-wrap; word-wrap: break-word;"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Loading Spinner -->
+    <div id="loadingSpinner" class="spinner hidden">
+        <div class="spinner-circle"></div>
+        <p>Loading...</p>
+    </div>
+
+    <!-- Toast Notifications -->
+    <div id="toastContainer" class="toast-container"></div>
+
+    <script src="/static/js/dashboard.js"></script>
+</body>
+</html>
+
